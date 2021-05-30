@@ -1,0 +1,19 @@
+{
+    "problems": [
+        {
+            "id": 0,
+            "title": "Hello, World!",
+            "point": 1
+        },
+        {
+            "id": 1,
+            "title": "최대공약수 구하기",
+            "point": 3
+        },
+        {
+            "id": 2,
+            "title": "영화관 방역정책",
+            "point": 10
+        }
+    ]
+}
