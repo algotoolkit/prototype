@@ -1,32 +1,55 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
-  </div>
+  <v-app>
+    <v-app-bar app color="primary" dark>
+      <v-app-bar-nav-icon @click="drawer = true"></v-app-bar-nav-icon>
+      <v-toolbar-title>MATH IS TRUTH</v-toolbar-title>
+      <v-spacer></v-spacer>
+      <span>YOUR SCORE: {{ this.$root.score }}</span>
+    </v-app-bar>
+    <v-navigation-drawer
+      v-model = "drawer"
+      absolute
+      temporary
+    >
+      <v-list
+        nav
+        dense
+      >
+        <v-list-item-group
+          v-model = "group"
+        >
+          <v-list-item v-for="problem in probs.problems" :key="problem.id">
+            <v-list-item-title @click="update(problem.id)">{{ problem.title + ` (${ problem.point }pt)` }}</v-list-item-title>
+          </v-list-item>
+        </v-list-item-group>
+      </v-list>
+    </v-navigation-drawer>
+    <v-main>
+      <Main ref="main"/>
+    </v-main>
+  </v-app>
 </template>
 
-<style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+<script>
+import Main from './components/Main';
+import problems from './assets/problems.json';
 
-#nav {
-  padding: 30px;
+export default {
+  name: 'App',
 
-  a {
-    font-weight: bold;
-    color: #2c3e50;
+  components: {
+    Main,
+  },
 
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
-}
-</style>
+  data: () => ({
+    probs: problems,
+    drawer: false,
+    group: null,
+  }),
+  methods: {
+    update: function(id) {
+      this.$refs.main.changeId(id);
+    },
+  },
+};
+</script>
