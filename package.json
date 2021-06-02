@@ -17,8 +17,11 @@
     "blockly": "^3.20200924.4",
     "core-js": "^3.8.1",
     "sweetalert2": "^8.19.0",
+    "use-browser-cache": "^1.2.0",
     "vue": "^2.6.12",
+    "vue-cache-data": "^1.5.1",
     "vue-cli": "^2.9.6",
+    "vue-cookies": "^1.7.4",
     "vue-markdown": "^2.2.4",
     "vue-router": "^3.5.1",
     "vuetify": "^2.4.0"

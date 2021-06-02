@@ -11,7 +11,7 @@
 
 <script>
 import * as Blockly from 'blockly/core';
-import BlocklyComponent from './BlocklyComponent.vue'
+import BlocklyComponent from '../components/BlocklyComponent.vue'
 import Statement from './Statement.vue'
 import '../blocks/modulo';
 import '../blocks/output';
@@ -30,19 +30,40 @@ export default {
   methods: {
     changeId: function(id) {
       let workspace = Blockly.getMainWorkspace();
-      this.$root.workspaces[this.id] = Blockly.Xml.workspaceToDom(workspace);
+      var l1 = JSON.parse(this.storage.getItem('workspaces'));
+      l1[this.id] = JSON.stringify(Blockly.Xml.workspaceToDom(workspace));
+      this.storage.setItem('workspaces', JSON.stringify(l1));
       workspace.clear();
-      if (this.$root.workspaces[id] != null) {
-        Blockly.Xml.domToWorkspace(this.$root.workspaces[id], workspace);
+      if (JSON.parse(l1[id]) != null) {
+        console.log(JSON.parse(l1[id]));
+        Blockly.Xml.domToWorkspace(JSON.parse(l1[id]), workspace);
       }
       this.id = id;
       this.$refs.state.id = id;
       this.$refs.state.update(id);
     },
+    save: function() {
+      let workspace = Blockly.getMainWorkspace();
+      var l1 = JSON.parse(this.storage.getItem('workspaces'));
+      l1[this.id] = JSON.stringify(Blockly.Xml.workspaceToDom(workspace));
+      this.storage.setItem('workspaces', JSON.stringify(l1));
+    },
+  },
+  created() {
+    let workspace = Blockly.getMainWorkspace();
+    var l1 = JSON.parse(this.storage.getItem('workspaces'));
+    console.log(this.id);
+    if (JSON.parse(l1[this.id]) != null) {
+      console.log(JSON.parse(l1[this.id]));
+      Blockly.Xml.domToWorkspace(JSON.parse(l1[this.id]), workspace);
+    }
+    this.timer = setInterval(this.save, 5000);
   },
   data(){
     return {
       id: 0,
+      timer: '',
+      storage: localStorage,
       options: {
         media: 'media/',
         grid:
@@ -173,7 +194,7 @@ export default {
       }
     }
   },
-  }
+}
 </script>
 
 <style scoped>

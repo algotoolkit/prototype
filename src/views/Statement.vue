@@ -95,9 +95,11 @@ export default {
             } else {
                 this.show_error_alert = true;
             }
-            this.$root.score -= this.$root.is_accepted[this.id];
-            this.$root.is_accepted[this.id] = this.prog;
-            this.$root.score += this.prog;
+            var l1 = JSON.parse(this.storage.getItem('is_accepted'));
+            this.storage.setItem('score', String(Number(this.storage.getItem('score')) - l1[this.id]));
+            l1[this.id] = this.prog;
+            this.storage.setItem('is_accepted', JSON.stringify(l1));
+            this.storage.setItem('score', String(Number(this.storage.getItem('score')) + this.prog));
         },
         update: function(id) {
             this.inputs = [];
@@ -108,7 +110,8 @@ export default {
             this.show_warning_alert = false;
             this.show_error_alert = false;
             this.id = id;
-            this.prog = this.$root.is_accepted[this.id];
+            var l1 = JSON.parse(this.storage.getItem('is_accepted'));
+            this.prog = l1[this.id];
             this.$refs.progress.value = 100 * (this.prog / this.point);
         axios.get(
         `/statement/${id}.md`,
@@ -126,10 +129,10 @@ export default {
             for (var i = 1; i <= this.index.size; i++) {
                 axios.get(
                 `/data/${id}/input/${i}.in`,
-                { baseURL: window.location.origin }).then(response => { this.inputs.push(response.data); });
+                { baseURL: window.location.origin }).then(response => { this.inputs.push(String(response.data)); });
                 axios.get(
                 `/data/${id}/output/${i}.out`,
-                { baseURL: window.location.origin }).then(response => { this.outputs.push(response.data); });
+                { baseURL: window.location.origin }).then(response => { this.outputs.push(String(response.data)); });
             }
         })
         }
@@ -139,6 +142,7 @@ export default {
     },
     data: () => ({
         id: 0,
+        storage: localStorage,
         prog: 0,
         index: {},
         inputs: [],

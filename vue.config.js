@@ -4,7 +4,7 @@ const CopyPlugin = require('copy-webpack-plugin');
 // vue.config.js
 module.exports = {
   devServer: {
-    port: 3000
+    port: 3008
   },
 
   configureWebpack: {
