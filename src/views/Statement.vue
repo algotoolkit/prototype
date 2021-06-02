@@ -71,16 +71,17 @@ export default {
     refs: ['markdown', 'markdown_input', 'markdown_output', 'progress', 'alert'],
     methods: {
         sumbit: function() {
+            console.log(this.inputs);
             this.$refs.progress.value = 0;
             this.prog = 0;
             this.code = Blockly.JavaScript.workspaceToCode(this.$refs["block"]);
             for (var i = 0; i < this.index.size; i++) {
                 var s = [];
-                var t = this.inputs[i].replace("\n", " ").split(" ");
+                var t = this.inputs[this.id][i].replace("\n", " ").split(" ");
                 t.reverse();
                 eval(this.code);
                 t.length;
-                if (s.join("\n") == this.outputs[i]) {
+                if (s.join("\n") == this.outputs[this.id][i]) {
                     this.prog += this.point/this.index.size;
                     this.$refs.progress.value += 100/this.index.size;
                 }
@@ -102,8 +103,8 @@ export default {
             this.storage.setItem('score', String(Number(this.storage.getItem('score')) + this.prog));
         },
         update: function(id) {
-            this.inputs = [];
-            this.outputs = [];
+            this.inputs = Array(problems.problems.length).fill([]);
+            this.outputs = Array(problems.problems.length).fill([]);
             this.title = problems.problems[id].title;
             this.point = problems.problems[id].point;
             this.show_success_alert = false;
@@ -129,10 +130,10 @@ export default {
             for (var i = 1; i <= this.index.size; i++) {
                 axios.get(
                 `/data/${id}/input/${i}.in`,
-                { baseURL: window.location.origin }).then(response => { this.inputs.push(String(response.data)); });
+                { baseURL: window.location.origin }).then(response => { this.inputs[id].push(String(response.data)); });
                 axios.get(
                 `/data/${id}/output/${i}.out`,
-                { baseURL: window.location.origin }).then(response => { this.outputs.push(String(response.data)); });
+                { baseURL: window.location.origin }).then(response => { this.outputs[id].push(String(response.data)); });
             }
         })
         }
@@ -142,10 +143,11 @@ export default {
     },
     data: () => ({
         id: 0,
+        allocated: false,
         storage: localStorage,
         prog: 0,
         index: {},
-        inputs: [],
+        inputs: Array(problems.problems.length).fill([]),
         outputs: [],
         statement: "",
         input: "",
@@ -157,7 +159,9 @@ export default {
         point: 0,
     }),
     mounted() {
-        this.update(this.id);
+        if (this.allocated) {
+            this.update(this.id);
+        }
     },
 }
 </script>
